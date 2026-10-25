@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ระบบจำลองทำข้อสอบกฎหมายดิจิทัล & ไซเบอร์ (Final Law Exam 2026)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #f1f5f9;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --accent-primary: #3b82f6;
+      --accent-hover: #2563eb;
+      --accent-soft: rgba(59, 130, 246, 0.12);
+      --correct-bg: #dcfce7;
+      --correct-border: #22c55e;
+      --correct-text: #15803d;
+      --wrong-bg: #fee2e2;
+      --wrong-border: #ef4444;
+      --wrong-text: #b91c1c;
+      --flag-color: #f59e0b;
+      --flag-bg: rgba(245, 158, 11, 0.15);
+      --kw-bg: #fef08a;
+      --kw-text: #854d0e;
+      --kw-border: #fde047;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+      --shadow-lg: 0 10px 25px rgba(15, 23, 42, 0.12);
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #0b1120;
+      --bg-secondary: #1e293b;
+      --bg-tertiary: #0f172a;
+      --text-primary: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+      --accent-primary: #60a5fa;
+      --accent-hover: #3b82f6;
+      --accent-soft: rgba(96, 165, 250, 0.15);
+      --correct-bg: rgba(34, 197, 94, 0.16);
+      --correct-border: #22c55e;
+      --correct-text: #4ade80;
+      --wrong-bg: rgba(239, 68, 68, 0.16);
+      --wrong-border: #ef4444;
+      --wrong-text: #f87171;
+      --flag-color: #fbbf24;
+      --flag-bg: rgba(251, 191, 36, 0.18);
+      --kw-bg: rgba(250, 204, 21, 0.22);
+      --kw-text: #fde047;
+      --kw-border: rgba(250, 204, 21, 0.45);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
+      --shadow-lg: 0 12px 30px rgba(0,0,0,0.5);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Prompt', 'Sarabun', sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.65;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Navbar */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background-color: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-sm);
+      transition: background-color 0.25s ease, border-color 0.25s ease;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: var(--text-primary);
+    }
+
+    .brand-badge {
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      color: white;
+      padding: 0.35rem 0.65rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background-color: var(--bg-tertiary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      padding: 0.45rem 0.85rem;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-icon:hover {
+      border-color: var(--accent-primary);
+      background-color: var(--accent-soft);
+    }
+
+    .btn-icon.active-toggle {
+      background-color: var(--accent-soft);
+      border-color: var(--accent-primary);
+      color: var(--accent-primary);
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1180px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 3rem;
+      flex: 1;
+    }
+
+    /* Start Screen */
+    .start-card {
+      max-width: 680px;
+      margin: 2.5rem auto;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+      box-shadow: var(--shadow-lg);
+      text-align: center;
+    }
+
+    .start-icon {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 1.25rem;
+      background: var(--accent-soft);
+      color: var(--accent-primary);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+    }
+
+    .start-title {
+      font-size: 1.65rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .start-subtitle {
+      color: var(--text-secondary);
+      font-size: 0.98rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .feature-badges {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .feature-pill {
+      background-color: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      padding: 0.35rem 0.8rem;
+      border-radius: 999px;
+      font-size: 0.83rem;
+      font-weight: 500;
+    }
+
+    .mode-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+
+    @media (max-width: 600px) {
+      .mode-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .mode-card {
+      background-color: var(--bg-tertiary);
+      border: 2px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.35rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .mode-card:hover {
+      border-color: var(--accent-primary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .mode-card.selected {
+      border-color: var(--accent-primary);
+      background-color: var(--accent-soft);
+    }
+
+    .mode-card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-weight: 600;
+      font-size: 1.05rem;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .mode-card-desc {
+      font-size: 0.86rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .start-btn {
+      width: 100%;
+      padding: 1rem 1.5rem;
+      font-size: 1.08rem;
+      font-weight: 600;
+      font-family: inherit;
+      color: #ffffff;
+      background: linear-gradient(135deg, #3b82f6, #4f46e5);
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: opacity 0.2s ease, transform 0.15s ease;
+      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
+    }
+
+    .start-btn:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+    }
+
+    /* Quiz Layout */
+    .quiz-layout {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    @media (max-width: 960px) {
+      .quiz-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Stats Bar */
+    .stats-bar {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 0.9rem 1.25rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .stats-group {
+      display: flex;
+      align-items: center;
+      gap: 1.15rem;
+      flex-wrap: wrap;
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .stat-val {
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .stat-val.correct { color: var(--correct-text); }
+    .stat-val.wrong { color: var(--wrong-text); }
+    .stat-val.flagged { color: var(--flag-color); }
+
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      background-color: var(--bg-tertiary);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #3b82f6, #22c55e);
+      border-radius: 999px;
+      transition: width 0.3s ease;
+    }
+
+    /* Question Card */
+    .question-card {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      padding: 1.75rem;
+      box-shadow: var(--shadow-md);
+      transition: all 0.25s ease;
+    }
+
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      flex-wrap: wrap;
+    }
+
+    .q-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .q-number-badge {
+      background-color: var(--accent-primary);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 10px;
+    }
+
+    .q-docx-badge {
+      background-color: var(--bg-tertiary);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+      font-size: 0.86rem;
+      font-weight: 600;
+      padding: 0.35rem 0.75rem;
+      border-radius: 10px;
+    }
+
+    .q-category-badge {
+      background-color: var(--accent-soft);
+      color: var(--accent-primary);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.3rem 0.7rem;
+      border-radius: 8px;
+    }
+
+    .flag-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.45rem 0.9rem;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-tertiary);
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .flag-btn:hover {
+      border-color: var(--flag-color);
+      color: var(--flag-color);
+    }
+
+    .flag-btn.flagged {
+      background-color: var(--flag-bg);
+      border-color: var(--flag-color);
+      color: var(--flag-color);
+    }
+
+    .question-text {
+      font-size: 1.2rem;
+      font-weight: 600;
+      line-height: 1.75;
+      margin-bottom: 1.5rem;
+      color: var(--text-primary);
+    }
+
+    /* Keyword Highlight */
+    mark.kw {
+      background-color: var(--kw-bg);
+      color: var(--kw-text);
+      border: 1px solid var(--kw-border);
+      padding: 0.05rem 0.38rem;
+      border-radius: 6px;
+      font-weight: 700;
+      transition: all 0.2s ease;
+    }
+
+    body.hide-kw mark.kw {
+      background-color: transparent;
+      color: inherit;
+      border-color: transparent;
+      padding: 0;
+      font-weight: inherit;
+    }
+
+    /* Choices */
+    .choices-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .choice-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.9rem;
+      width: 100%;
+      text-align: left;
+      padding: 1rem 1.15rem;
+      border-radius: 14px;
+      border: 2px solid var(--border-color);
+      background-color: var(--bg-tertiary);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 1.02rem;
+      line-height: 1.55;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      position: relative;
+    }
+
+    .choice-btn:hover:not(:disabled) {
+      border-color: var(--accent-primary);
+      background-color: var(--accent-soft);
+      transform: translateX(3px);
+    }
+
+    .choice-btn:disabled {
+      cursor: default;
+    }
+
+    .choice-letter {
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      border-radius: 8px;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      margin-top: 1px;
+    }
+
+    .choice-content {
+      flex: 1;
+      font-weight: 500;
+    }
+
+    .choice-status-icon {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-left: auto;
+      padding-left: 0.5rem;
+    }
+
+    /* Answered States */
+    .choice-btn.correct-answer {
+      background-color: var(--correct-bg);
+      border-color: var(--correct-border);
+      color: var(--correct-text);
+    }
+
+    .choice-btn.correct-answer .choice-letter {
+      background-color: var(--correct-border);
+      border-color: var(--correct-border);
+      color: #ffffff;
+    }
+
+    .choice-btn.wrong-answer {
+      background-color: var(--wrong-bg);
+      border-color: var(--wrong-border);
+      color: var(--wrong-text);
+    }
+
+    .choice-btn.wrong-answer .choice-letter {
+      background-color: var(--wrong-border);
+      border-color: var(--wrong-border);
+      color: #ffffff;
+    }
+
+    /* Explanation Box */
+    .explanation-box {
+      background-color: var(--bg-tertiary);
+      border-left: 4px solid var(--accent-primary);
+      border-radius: 12px;
+      padding: 1.15rem 1.35rem;
+      margin-bottom: 1.5rem;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .explanation-box.is-correct {
+      border-left-color: var(--correct-border);
+    }
+
+    .explanation-box.is-wrong {
+      border-left-color: var(--wrong-border);
+    }
+
+    .exp-header {
+      font-weight: 700;
+      font-size: 0.98rem;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .exp-header.correct { color: var(--correct-text); }
+    .exp-header.wrong { color: var(--wrong-text); }
+
+    .exp-body {
+      font-size: 0.94rem;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Navigation Footer */
+    .question-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.7rem 1.3rem;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-btn:hover:not(:disabled) {
+      border-color: var(--accent-primary);
+      background-color: var(--accent-soft);
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .nav-btn.primary {
+      background-color: var(--accent-primary);
+      border-color: var(--accent-primary);
+      color: #ffffff;
+    }
+
+    .nav-btn.primary:hover:not(:disabled) {
+      background-color: var(--accent-hover);
+    }
+
+    /* Sidebar Question Navigator */
+    .sidebar-card {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      padding: 1.35rem;
+      box-shadow: var(--shadow-md);
+      position: sticky;
+      top: 5rem;
+    }
+
+    .sidebar-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.85rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .filter-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.45rem;
+      margin-bottom: 1rem;
+    }
+
+    .filter-tab {
+      padding: 0.4rem 0.5rem;
+      font-size: 0.8rem;
+      font-family: inherit;
+      font-weight: 600;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-tertiary);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: center;
+    }
+
+    .filter-tab.active {
+      background-color: var(--accent-primary);
+      border-color: var(--accent-primary);
+      color: #ffffff;
+    }
+
+    .q-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .q-grid-btn {
+      aspect-ratio: 1;
+      border-radius: 10px;
+      border: 1.5px solid var(--border-color);
+      background-color: var(--bg-tertiary);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .q-grid-btn:hover {
+      border-color: var(--accent-primary);
+      transform: scale(1.05);
+    }
+
+    .q-grid-btn.current {
+      outline: 2.5px solid var(--accent-primary);
+      outline-offset: 1px;
+      font-weight: 700;
+    }
+
+    .q-grid-btn.answered-correct {
+      background-color: var(--correct-bg);
+      border-color: var(--correct-border);
+      color: var(--correct-text);
+    }
+
+    .q-grid-btn.answered-wrong {
+      background-color: var(--wrong-bg);
+      border-color: var(--wrong-border);
+      color: var(--wrong-text);
+    }
+
+    .q-grid-btn .star-dot {
+      position: absolute;
+      top: 2px;
+      right: 3px;
+      font-size: 0.65rem;
+      line-height: 1;
+    }
+
+    .q-grid-btn .orig-sub {
+      font-size: 0.6rem;
+      opacity: 0.75;
+      line-height: 1;
+      margin-top: 1px;
+    }
+
+    .legend-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--border-color);
+      margin-bottom: 1rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .legend-box {
+      width: 12px;
+      height: 12px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    /* Summary Modal / View */
+    .summary-card {
+      max-width: 820px;
+      margin: 1.5rem auto;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 2.25rem;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .score-circle {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      border: 4px solid var(--accent-primary);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.25rem;
+    }
+
+    .score-big {
+      font-size: 2.1rem;
+      font-weight: 700;
+      color: var(--accent-primary);
+      line-height: 1.1;
+    }
+
+    .score-sub {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .summary-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .kbd-hint {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 0.85rem;
+    }
+
+    kbd {
+      background-color: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 0.1rem 0.35rem;
+      font-size: 0.75rem;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="navbar">
+    <div class="brand">
+      <span class="brand-badge">LAW & CYBER</span>
+      <span>ระบบจำลองข้อสอบ (30 ข้อ)</span>
+    </div>
+    <div class="nav-controls">
+      <button id="toggleKwBtn" class="btn-icon active-toggle" onclick="toggleKeywordHighlight()" title="เปิด/ปิด ไฮไลต์คีย์เวิร์ดสำคัญในโจทย์">
+        <span>✨ ไฮไลต์คีย์เวิร์ด: เปิด</span>
+      </button>
+      <button id="themeBtn" class="btn-icon" onclick="toggleTheme()" title="สลับโหมดสีเข้ม/สีอ่อน">
+        <span id="themeIcon">☀️ โหมดสว่าง</span>
+      </button>
+      <button id="homeBtn" class="btn-icon hidden" onclick="returnToStart()" title="กลับหน้าตั้งค่าเริ่มต้น">
+        <span>🏠 ตั้งค่าใหม่</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- 1. START SCREEN -->
+    <section id="startScreen" class="start-card">
+      <div class="start-icon">⚖️</div>
+      <h1 class="start-title">จำลองทำข้อสอบกฎหมายเทคโนโลยีและไซเบอร์</h1>
+      <p class="start-subtitle">ชุดข้อสอบ Final-Law-Exam-2026 จำนวน 30 ข้อ (พ.ร.ก. อาชญากรรมทางเทคโนโลยี, พ.ร.บ. ไซเบอร์, PDPA & GDPR)</p>
+
+      <div class="feature-badges">
+        <span class="feature-pill">✅ เฉลยทันทีเมื่อตอบ</span>
+        <span class="feature-pill">🔄 ย้อนกลับข้อเก่าได้ตลอด</span>
+        <span class="feature-pill">♾️ ไม่จำกัดเวลา</span>
+        <span class="feature-pill">⭐ ปักธง/ติดดาวทบทวน</span>
+        <span class="feature-pill">✨ ไฮไลต์คีย์เวิร์ดสำคัญ</span>
+      </div>
+
+      <h3 style="text-align:left; margin-bottom:0.75rem; font-size:1rem;">เลือกรูปแบบการทำข้อสอบก่อนเริ่ม:</h3>
+      <div class="mode-grid">
+        <div id="modeRandomCard" class="mode-card selected" onclick="selectMode(true)">
+          <div>
+            <div class="mode-card-header">
+              <span>🔀 1) Random โจทย์และช้อย</span>
+            </div>
+            <p class="mode-card-desc">
+              สุ่มลำดับข้อสอบและสุ่มตัวเลือก ก-ง ใหม่ทุกครั้ง พร้อมแสดงกำกับชัดเจน เช่น <strong>"ข้อ 1 (ข้อในไฟล์ .docx 19)"</strong>
+            </p>
+          </div>
+        </div>
+
+        <div id="modeSequentialCard" class="mode-card" onclick="selectMode(false)">
+          <div>
+            <div class="mode-card-header">
+              <span>📋 2) ไม่ Random โจทย์และช้อย</span>
+            </div>
+            <p class="mode-card-desc">
+              เรียงลำดับข้อสอบข้อ 1 ถึง 30 และเรียงตัวเลือก ก-ง ตามลำดับต้นฉบับในไฟล์ <strong>Final-Law-Exam-2026.docx</strong> ทุกประการ
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <button class="start-btn" onclick="startQuiz()">🚀 เริ่มทำข้อสอบเลย</button>
+    </section>
+
+    <!-- 2. QUIZ SCREEN -->
+    <section id="quizScreen" class="hidden">
+      <!-- Top Stats & Progress -->
+      <div class="stats-bar">
+        <div class="stats-group">
+          <div class="stat-item">โหมด: <span id="currentModeLabel" class="stat-val">สุ่มโจทย์และช้อย</span></div>
+          <div class="stat-item">ตอบแล้ว: <span id="statAnswered" class="stat-val">0/30</span></div>
+          <div class="stat-item">ถูก: <span id="statCorrect" class="stat-val correct">0</span></div>
+          <div class="stat-item">ผิด: <span id="statWrong" class="stat-val wrong">0</span></div>
+          <div class="stat-item">⭐ ปักธง: <span id="statFlagged" class="stat-val flagged">0</span></div>
+        </div>
+        <div>
+          <button class="btn-icon" onclick="showSummaryScreen()">📊 ดูสรุปผลคะแนน</button>
+        </div>
+        <div class="progress-track">
+          <div id="progressBar" class="progress-fill" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <div class="quiz-layout">
+        <!-- Left: Active Question -->
+        <div>
+          <div class="question-card">
+            <div class="question-header">
+              <div class="q-meta">
+                <span id="qNumberBadge" class="q-number-badge">ข้อ 1</span>
+                <span id="qDocxBadge" class="q-docx-badge">ข้อในไฟล์ .docx 1</span>
+                <span id="qCategoryBadge" class="q-category-badge">พ.ร.ก. อาชญากรรมทางเทคโนโลยี</span>
+              </div>
+              <button id="flagBtn" class="flag-btn" onclick="toggleFlagCurrent()">
+                <span id="flagIcon">☆</span>
+                <span id="flagText">ปักธง/ติดดาว</span>
+              </button>
+            </div>
+
+            <div id="questionText" class="question-text"></div>
+
+            <div id="choicesContainer" class="choices-list"></div>
+
+            <div id="explanationBox" class="explanation-box hidden">
+              <div id="expHeader" class="exp-header"></div>
+              <div id="expBody" class="exp-body"></div>
+            </div>
+
+            <div class="question-footer">
+              <button id="prevBtn" class="nav-btn" onclick="prevQuestion()">⬅️ ข้อก่อนหน้า</button>
+              <button id="reAnswerBtn" class="nav-btn hidden" onclick="clearCurrentAnswer()" title="ล้างคำตอบข้อนี้เพื่อลองตอบใหม่">🔄 ลองตอบข้อนี้ใหม่</button>
+              <button id="nextBtn" class="nav-btn primary" onclick="nextQuestion()">ข้อถัดไป ➡️</button>
+            </div>
+          </div>
+
+          <div class="kbd-hint">
+            💡 คีย์ลัด: กด <kbd>1</kbd>-<kbd>4</kbd> เพื่อเลือกตอบ | <kbd>←</kbd> <kbd>→</kbd> เลื่อนข้อ | <kbd>F</kbd> ปักธง/ติดดาว
+          </div>
+        </div>
+
+        <!-- Right: Question Navigator & Flag Filter -->
+        <aside class="sidebar-card">
+          <div class="sidebar-title">
+            <span>แผนผังข้อสอบ (30 ข้อ)</span>
+            <span id="filterCountLabel" style="font-size:0.8rem; color:var(--text-muted); font-weight:500;">ทั้งหมด</span>
+          </div>
+
+          <div class="filter-tabs">
+            <button id="tabAll" class="filter-tab active" onclick="setGridFilter('all')">ทั้งหมด (30)</button>
+            <button id="tabFlagged" class="filter-tab" onclick="setGridFilter('flagged')">⭐ ปักธง (<span id="tabFlagCount">0</span>)</button>
+            <button id="tabUnanswered" class="filter-tab" onclick="setGridFilter('unanswered')">ยังไม่ตอบ</button>
+            <button id="tabWrong" class="filter-tab" onclick="setGridFilter('wrong')">❌ ตอบผิด</button>
+          </div>
+
+          <div id="questionGrid" class="q-grid"></div>
+
+          <div class="legend-list">
+            <div class="legend-item">
+              <span class="legend-box" style="background:var(--correct-bg); border:1.5px solid var(--correct-border);"></span> ตอบถูก
+            </div>
+            <div class="legend-item">
+              <span class="legend-box" style="background:var(--wrong-bg); border:1.5px solid var(--wrong-border);"></span> ตอบผิด
+            </div>
+            <div class="legend-item">
+              <span class="legend-box" style="background:var(--bg-tertiary); border:1.5px solid var(--border-color);"></span> ยังไม่ตอบ
+            </div>
+            <div class="legend-item">
+              <span>⭐</span> ปักธงทบทวน
+            </div>
+          </div>
+
+          <button class="btn-icon" style="width:100%; justify-content:center;" onclick="resetCurrentQuiz()">
+            🔄 รีเซ็ตคำตอบทั้งหมดในรอบนี้
+          </button>
+        </aside>
+      </div>
+    </section>
+
+    <!-- 3. SUMMARY SCREEN -->
+    <section id="summaryScreen" class="summary-card hidden">
+      <div style="text-align:center;">
+        <div class="score-circle">
+          <div id="finalScoreText" class="score-big">0/30</div>
+          <div id="finalPercentText" class="score-sub">0%</div>
+        </div>
+        <h2 style="font-size:1.5rem; margin-bottom:0.4rem;">สรุปผลการทำข้อสอบ</h2>
+        <p id="summarySubtitle" style="color:var(--text-secondary); margin-bottom:1.25rem;"></p>
+      </div>
+
+      <div class="summary-actions">
+        <button class="nav-btn primary" onclick="resumeQuiz()">🔙 กลับไปดูข้อสอบ / ทบทวนต่อ</button>
+        <button id="retryWrongBtn" class="nav-btn" onclick="jumpToFirstWrong()">❌ ไปดูข้อที่ตอบผิด</button>
+        <button id="retryFlaggedBtn" class="nav-btn" onclick="jumpToFirstFlagged()">⭐ ไปดูข้อที่ปักธงไว้</button>
+        <button class="nav-btn" onclick="returnToStart()">🏠 เริ่มใหม่ / เปลี่ยนโหมดสุ่ม</button>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // ข้อมูลข้อสอบทั้ง 30 ข้อจากไฟล์ Final-Law-Exam-2026.docx
+    const RAW_QUESTIONS = [
+      {
+        origNo: 1,
+        category: "พ.ร.ก. อาชญากรรมทางเทคโนโลยี (ฉบับที่ 2)",
+        questionHtml: "จาก <mark class='kw'>พ.ร.ก. การป้องกันและปราบปรามอาชญากรรมทางเทคโนโลยี (ฉบับที่ 2) พ.ศ. 2568</mark> ข้อใด<mark class='kw'>มิใช่</mark>ผู้ที่จะต้อง<mark class='kw'>มีส่วนรับผิดชอบในความเสียหาย</mark>ที่เกิดขึ้นกับผู้เสียหาย",
+        choices: [
+          "สถาบันการเงิน",
+          "ผู้ให้บริการโทรศัพท์มือถือ",
+          "คณะรัฐมนตรี",
+          "ผู้ประกอบธุรกิจสินทรัพย์ดิจิทัล"
+        ],
+        correctIndex: 2,
+        explanation: "พ.ร.ก. การป้องกันและปราบปรามอาชญากรรมทางเทคโนโลยี (ฉบับที่ 2) พ.ศ. 2568 กำหนดความรับผิดชอบร่วม (Shared Responsibility) ให้กับสถาบันการเงิน ผู้ให้บริการเครือข่ายโทรศัพท์เคลื่อนที่ และผู้ประกอบธุรกิจสินทรัพย์ดิจิทัล หากละเลยมาตรฐานความปลอดภัย แต่ไม่ได้กำหนดให้ 'คณะรัฐมนตรี' ต้องร่วมรับผิดชอบชดใช้ค่าเสียหาย"
+      },
+      {
+        origNo: 2,
+        category: "พ.ร.บ. ไซเบอร์ (CII)",
+        questionHtml: "ข้อใดเป็นตัวอย่าง<mark class='kw'>หน่วยงานโครงสร้างพื้นฐานสำคัญทางสารสนเทศ</mark>",
+        choices: [
+          "ด้านการเงินการธนาคาร",
+          "ด้านเทคโนโลยีสารสนเทศและโทรคมนาคม",
+          "ด้านบริการภาครัฐที่สำคัญ",
+          "ถูกทุกข้อ"
+        ],
+        correctIndex: 3,
+        explanation: "ตาม พ.ร.บ. การรักษาความมั่นคงปลอดภัยไซเบอร์ พ.ศ. 2562 มาตรา 49 หน่วยงานโครงสร้างพื้นฐานสำคัญทางสารสนเทศ (CII) ครอบคลุมทั้งด้านการเงินการธนาคาร เทคโนโลยีสารสนเทศและโทรคมนาคม บริการภาครัฐที่สำคัญ ความมั่นคง พลังงาน ขนส่ง และสาธารณสุข"
+      },
+      {
+        origNo: 3,
+        category: "พ.ร.ก. อาชญากรรมทางเทคโนโลยี (ฉบับที่ 2)",
+        questionHtml: "<mark class='kw'>เหตุผลสำคัญ</mark>ในการออก <mark class='kw'>พ.ร.ก. การป้องกันและ ปราบปรามอาชญากรรม ทางเทคโนโลยี (ฉบับที่ 2) พ.ศ. 2568</mark> คือข้อใด",
+        choices: [
+          "เพื่อป้องกันและปราบปรามภัยคุกคามไซเบอร์ที่เพิ่มขึ้น",
+          "เพื่อส่งเสริมการใช้กระเป๋าดิจิทัล",
+          "เพื่อขยายตลาดอีคอมเมิร์ซ",
+          "เพื่อส่งเสริมการใช้งานสด"
+        ],
+        correctIndex: 0,
+        explanation: "พ.ร.ก. ฉบับที่ 2 พ.ศ. 2568 ออกมาเพื่อยกระดับมาตรการป้องกันและปราบปรามอาชญากรรมทางเทคโนโลยีและภัยคุกคามทางไซเบอร์ที่ทวีความรุนแรงและซับซ้อนขึ้น (เช่น แก๊งคอลเซ็นเตอร์ บัญชีม้า สินทรัพย์ดิจิทัล)"
+      },
+      {
+        origNo: 4,
+        category: "GDPR / สิทธิในการถูกลืม",
+        questionHtml: "<mark class='kw'>นักธุรกิจชาวสเปน</mark>เคยถูกประกาศ<mark class='kw'>ล้มละลายในปี ค.ศ. 2011</mark> แม้พ้นสภาพมาแล้ว แต่เมื่อค้นชื่อของเขานั้น <mark class='kw'>Google ยังพบข่าว</mark>ดังกล่าวและทำให้เสียลูกค้า จึงฟ้องจนถึง<mark class='kw'>ศาลยุติธรรมสหภาพยุโรป (ECJ)</mark> ผลคำวินิจฉัยตรงกับข้อใด",
+        choices: [
+          "นักธุรกิจชนะคดี มีสิทธิเรียกให้นำข้อมูลออกจากผลการค้นหา และข้อมูลที่ลงในหนังสือพิมพ์ไปแล้วไม่อาจดำเนินการได้",
+          "Google ไม่ต้องรับผิด เพราะเป็นบริษัทของสหรัฐอเมริกาซึ่งไม่อยู่ภายใต้กฎหมายสหภาพยุโรป",
+          "นักธุรกิจแพ้คดี เพราะข้อมูลที่เผยแพร่ในหนังสือพิมพ์ถือเป็นข้อมูลสาธารณะ",
+          "ศาลสั่งให้หนังสือพิมพ์ลบข่าวทั้งหมดออกจากทุกร้านข้อมูล"
+        ],
+        correctIndex: 0,
+        explanation: "คดี Google Spain (Mario Costeja González): ศาล ECJ วินิจฉัยวางหลัก Right to be Forgotten (สิทธิในการถูกลืม/ลบออกจากผลการค้นหา) โดยสั่งให้ Google ลบลิงก์ผลการค้นหาชื่อของเขาออก แต่ข่าวต้นฉบับในหนังสือพิมพ์ยังคงอยู่ได้ตามวัตถุประสงค์ทางประวัติศาสตร์และสื่อสารมวลชน"
+      },
+      {
+        origNo: 5,
+        category: "พ.ร.บ. ไซเบอร์",
+        questionHtml: "ใครต่อไปนี้ที่ต้อง<mark class='kw'>ปฏิบัติตาม พรบ.ไซเบอร์โดยภาคบังคับ</mark>",
+        choices: [
+          "A เป็นนิสิตนักศึกษาวิศวกรรมคอมพิวเตอร์",
+          "B เป็นพนักงานคอมพิวเตอร์ในโรงพยาบาล",
+          "C เป็นผู้ใช้ Facebook",
+          "ทั้ง A B และ C"
+        ],
+        correctIndex: 1,
+        explanation: "โรงพยาบาลจัดเป็นหน่วยงานโครงสร้างพื้นฐานสำคัญทางสารสนเทศ (CII) ด้านสาธารณสุข ดังนั้นพนักงานคอมพิวเตอร์ที่ดูแลระบบสารสนเทศในโรงพยาบาลจึงต้องปฏิบัติตามมาตรฐานและหลักเกณฑ์ของ พ.ร.บ. ไซเบอร์ โดยภาคบังคับ"
+      },
+      {
+        origNo: 6,
+        category: "PDPA / การโอนข้อมูลไปต่างประเทศ",
+        questionHtml: "ข้อใด<mark class='kw'>กล่าวถูกต้อง</mark> เกี่ยว กับหลักเกณฑ์การให้ ความคุ้มครองข้อมูลส่วนบุคคลที่<mark class='kw'>ส่งหรือโอนไปยัง ต่างประเทศ</mark>",
+        choices: [
+          "ประเทศปลายทางหรือองค์การระหว่างประเทศที่รับข้อมูล ส่วนบุคคลต้องมีมาตรฐานการคุ้มครองข้อมูลส่วนบุคคล ที่เพียงพอ",
+          "ส่งหรือโอนไปยังต่างประเทศ ไม่จำเป็นต้องปฏิบัติตาม PDPA",
+          "ส่งหรือโอนไปยังต่างประเทศ ได้เฉพาะการส่งสำเนาที่เป็นกระดาษไปห้ามส่งผ่านระบบคอมพิวเตอร์",
+          "ส่งหรือโอนไปยังต่างประเทศ ต้องแจ้งสำนักงานคณะกรรมการคุ้มครองข้อมูลส่วนบุคคลทุกครั้ง"
+        ],
+        correctIndex: 0,
+        explanation: "ตาม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล (PDPA) มาตรา 28 การส่งหรือโอนข้อมูลส่วนบุคคลไปยังต่างประเทศ ประเทศปลายทางหรือองค์การระหว่างประเทศที่รับข้อมูลต้องมีมาตรฐานการคุ้มครองข้อมูลส่วนบุคคลที่เพียงพอ (Adequacy Decision)"
+      },
+      {
+        origNo: 7,
+        category: "พ.ร.ก. อาชญากรรมทางเทคโนโลยี (ฉบับที่ 2)",
+        questionHtml: "ข้อใด<mark class='kw'>ไม่ใช่ประโยชน์</mark>ของ <mark class='kw'>พ.ร.ก. การป้องกันและ ปราบปรามอาชญากรรม ทางเทคโนโลยี (ฉบับที่ 2)</mark>",
+        choices: [
+          "ผู้เสียหายโทรแจ้งให้ธนาคารระงับบัญชีน่า ส่งสัยได้ทันที",
+          "ผู้เสียหายไม่ต้องรอให้มีการยื่นฟ้องคดีต่อ ศาลจนมีคำสั่งถึงที่สุดก่อน",
+          "ผู้เสียหายสามารถโทรแจ้งให้ธนาคารโอน เงินคืนได้ทันที",
+          "คณะกรรมการธุรกรรมตามกฎหมายว่าด้วยการป้องกัน และปราบปรามการฟอกเงินเป็นผู้มีอำนาจพิจารณาคืน เงินแก่ผู้เสียหาย"
+        ],
+        correctIndex: 2,
+        explanation: "ผู้เสียหายสามารถแจ้งให้ธนาคารระงับธุรกรรมชั่วคราวได้ทันที แต่ธนาคารไม่สามารถโอนเงินคืนให้ได้ทันทีเพียงแค่โทรแจ้ง เพราะต้องผ่านกระบวนการตรวจสอบและพิจารณาโดยคณะกรรมการธุรกรรม (ปปง.) เพื่อคืนเงินให้ผู้เสียหายโดยไม่ต้องรอฟ้องศาลจนคดีถึงที่สุด"
+      },
+      {
+        origNo: 8,
+        category: "PDPA & GDPR / สิทธิเจ้าของข้อมูล",
+        questionHtml: "ข้อใดต่อไปนี้สามารถ อธิบายถึง<mark class='kw'>สิทธิในการถูก ลืม (Right to be Forgotten)</mark> ได้<mark class='kw'>ดีที่สุด</mark>",
+        choices: [
+          "สิทธิ์ในการแก้ไขข้อมูลส่วนบุคคลที่ไม่ถูกต้องหรือไม่สมบูรณ์",
+          "สิทธิในการจำกัดการประมวลผลข้อมูลส่วนบุคคล",
+          "สิทธิในการลบข้อมูลส่วนบุคคลเมื่อการประมวลผลได้สิ้นสุดลง",
+          "สิทธิในการขอสำเนาของข้อมูลส่วนบุคคลที่กำลังถูกประมวลผล"
+        ],
+        correctIndex: 2,
+        explanation: "Right to be Forgotten (หรือ Right to Erasure) คือสิทธิของเจ้าของข้อมูลส่วนบุคคลในการขอให้ลบหรือทำลายข้อมูลส่วนบุคคลของตน เมื่อหมดความจำเป็นตามวัตถุประสงค์ หรือเมื่อการประมวลผลได้สิ้นสุดลงแล้ว"
+      },
+      {
+        origNo: 9,
+        category: "PDPA / การละเมิดข้อมูลส่วนบุคคล",
+        questionHtml: "ผู้ใดมีโอกาส<mark class='kw'>ถูกแจ้งข้อหา ละเมิดกฎหมาย PDPA</mark>",
+        choices: [
+          "หมูเต็งบอกหมูตัวว่า โจน่าเป็นแม่ของ ตนเอง",
+          "หมูเต๋งบอกหมูกรอบให้ส่งเมล์ไปทา โดย บอกอีเมล์ของตนเองไป",
+          "หมูตัวงบอกหมูกรอบว่า โจน่าเป็นแม่ของหมูเด้ง",
+          "หมูกรอบไปโพสต์อวดว่าตนเองมีอีเมล์ส่วนตัวของหมูเด้งคนดัง โดย โพสต์อีเมล์ของหมูเด้งบนเฟสบุ๊ค"
+        ],
+        correctIndex: 3,
+        explanation: "การนำอีเมลส่วนตัวของบุคคลอื่น (หมูเด้ง) ไปโพสต์เผยแพร่ต่อสาธารณะบน Facebook โดยไม่ได้รับความยินยอมและไม่ใช่ประโยชน์ส่วนตนในครอบครัว ถือเป็นการเปิดเผยข้อมูลส่วนบุคคลที่ละเมิด PDPA"
+      },
+      {
+        origNo: 10,
+        category: "PDPA / ข้อมูลส่วนบุคคล",
+        questionHtml: "ถ้าหากคุณเป็น<mark class='kw'>ผู้ดูแล เว็บไซต์ของบริษัทลาซาด้า</mark> ข้อใดเป็นถือเป็น<mark class='kw'>ข้อมูลส่วนบุคคล</mark>",
+        choices: [
+          "หมายเลขจดทะเบียนบริษัท",
+          "URL ของบริษัท",
+          "อีเมล์ของบริษัท",
+          "พฤติกรรมการบริโภคสินค้า - บริการของ ลูกค้า"
+        ],
+        correctIndex: 3,
+        explanation: "ข้อมูลของนิติบุคคล (ทะเบียนบริษัท, URL บริษัท, อีเมลกลางของบริษัท) ไม่ถือเป็นข้อมูลส่วนบุคคลตาม PDPA ส่วน 'พฤติกรรมการบริโภคสินค้า-บริการของลูกค้า' ที่สามารถเชื่อมโยงระบุตัวตนลูกค้าที่เป็นบุคคลธรรมดาได้ ถือเป็นข้อมูลส่วนบุคคล"
+      },
+      {
+        origNo: 11,
+        category: "พ.ร.บ. ไซเบอร์ / ระดับภัยคุกคาม",
+        questionHtml: "ภัยคุกคามใดถือเป็น<mark class='kw'>ระดับร้ายแรง</mark>",
+        choices: [
+          "ภัยคุกคามที่กระทบต่อความสงบเรียบร้อยของประชาชนหรือเป็นภัยต่อความมั่นคงของรัฐ",
+          "ภัยคุกคามที่ทำให้บริการของรัฐไม่สามารถทำงานหรือให้บริการได้",
+          "ภัยคุกคามที่ทำให้บริการของรัฐต้องประสิทธิภาพลง",
+          "ถูกทุกข้อ"
+        ],
+        correctIndex: 1,
+        explanation: "ตาม พ.ร.บ. ไซเบอร์: (1) ระดับไม่ร้ายแรง = ระบบทำงานช้า/ประสิทธิภาพลดลง, (2) ระดับร้ายแรง = ทำให้ระบบหรือบริการสำคัญของรัฐไม่สามารถทำงานหรือให้บริการได้, (3) ระดับวิกฤติ = กระทบความสงบเรียบร้อยของประชาชน/ความมั่นคงของรัฐ หรือล้มเหลวทั้งระบบ"
+      },
+      {
+        origNo: 12,
+        category: "PDPA / หน้าที่ผู้ประมวลผลข้อมูล",
+        questionHtml: "บริษัทพัฒนาระบบ (<mark class='kw'>ผู้ประมวลผลข้อมูล</mark>) ตรวจพบว่า<mark class='kw'>ข้อมูลลูกค้าของบริษัทที่ว่าจ้างรั่วไหล</mark>แต่เลือกปิดเงียบเพราะกลัวเสียชื่อเสียง <mark class='kw'>ผู้ประมวลผลข้อมูลมีหน้าที่ใด</mark>ในกรณีนี้",
+        choices: [
+          "แจ้งเหตุให้ผู้ควบคุมข้อมูลทราบ และไม่ต้องแจ้งสคล. หรือเจ้าของข้อมูล เว้นแต่ผู้ควบคุมมอบหมายตามสัญญา",
+          "แจ้งเฉพาะ สคล. โดยไม่ต้องแจ้งผู้ควบคุมข้อมูล",
+          "ไม่มีหน้าที่ใด เพราะการรับมือเหตุรั่วไหลเป็นหน้าที่ของ สคล. เท่านั้น",
+          "แจ้งเจ้าของข้อมูลทุกรายด้วยตนเองโดยไม่ต้องผ่านผู้ควบคุมข้อมูล"
+        ],
+        correctIndex: 0,
+        explanation: "ตาม PDPA มาตรา 40(3) ผู้ประมวลผลข้อมูลส่วนบุคคล (Data Processor) มีหน้าที่แจ้งให้ 'ผู้ควบคุมข้อมูลส่วนบุคคล' (Data Controller) ทราบถึงเหตุการละเมิดข้อมูลส่วนบุคคล ส่วนการแจ้ง สคส. และเจ้าของข้อมูลเป็นหน้าที่ของผู้ควบคุมข้อมูล (เว้นแต่มอบหมายไว้ในสัญญา)"
+      },
+      {
+        origNo: 13,
+        category: "GDPR / ขอบเขตข้ามพรมแดน",
+        questionHtml: "<mark class='kw'>บริษัทเทคโนโลยีของสหรัฐฯ</mark> ไม่มีสำนักงานและไม่ได้ให้บริการลูกค้าในยุโรป แต่<mark class='kw'>ขูดภาพถ่ายบนอินเทอร์เน็ตของประชากรยุโรป</mark>ไปสร้าง <mark class='kw'>Biometric Template</mark> ให้หน่วยงานบังคับใช้กฎหมายแล้ว อ้างว่าไม่อยู่ภายใต้ <mark class='kw'>GDPR</mark> ข้อใด",
+        choices: [
+          "ขออ้างฟังขึ้น เพราะ GDPR ใช้เฉพาะบริษัทที่ตั้งอยู่ในยุโรป",
+          "ขออ้างฟังขึ้น เพราะบริษัทเก็บเฉพาะภาพที่เผยแพร่สู่สาธารณะอยู่แล้ว",
+          "ขออ้างฟังไม่ขึ้น เพราะบริษัทให้บริการแก่ลูกค้าในยุโรปโดยตรง",
+          "ขออ้างฟังไม่ขึ้น เพราะ GDPR มีผลข้ามพรมแดนภายใต้เงื่อนไขการนำติดตามพฤติกรรมแม้เซิร์ฟเวอร์อยู่นอกประเทศ"
+        ],
+        correctIndex: 3,
+        explanation: "ตาม GDPR Article 3(2) (Extraterritorial scope - กรณี Clearview AI) แม้บริษัทตั้งอยู่นอก EU แต่หากมีการประมวลผลข้อมูลที่เข้าข่ายเฝ้าติดตามพฤติกรรมหรือสร้างโปรไฟล์ไบโอเมตริกซ์ของบุคคลที่อยู่ในสหภาพยุโรป ย่อมอยู่ภายใต้บังคับของ GDPR"
+      },
+      {
+        origNo: 14,
+        category: "PDPA / ความยินยอมของผู้เยาว์",
+        questionHtml: "<mark class='kw'>เด็กชายอายุ 9 ปี</mark>สมัครใช้งาน เกมออนไลน์ โดยผู้ให้บริการ<mark class='kw'>ขอความยินยอม</mark>ในการเก็บข้อมูลส่วนบุคคล<mark class='kw'>จากตัวเด็กเอง</mark>ด้วย การกดยอมรับ ข้อใดวิเคราะห์ได้ถูกต้องตาม<mark class='kw'>มาตรา 20</mark>",
+        choices: [
+          "ถูกต้อง เพราะเด็กเป็นเจ้าของข้อมูลจึงให้ความยินยอมได้เอง",
+          "ไม่ถูกต้อง เพราะกฎหมายห้ามเก็บข้อมูลส่วนบุคคลของผู้เยาว์ทุกกรณี",
+          "ไม่ถูกต้อง เพราะผู้เยาว์อายุไม่เกิน 10 ปี ต้องขอความยินยอมจากผู้ใช้อำนาจปกครอง",
+          "ถูกต้อง หากเด็กอ่านเงื่อนไขการใช้งานครบถ้วนก่อนกดยอมรับ"
+        ],
+        correctIndex: 2,
+        explanation: "ตาม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล (PDPA) มาตรา 20 ในกรณีที่ผู้เยาว์มีอายุไม่เกิน 10 ปี การขอความยินยอมต้องได้รับความยินยอมจากผู้ใช้อำนาจปกครองที่มีอำนาจกระทำการแทนผู้เยาว์โดยตรง"
+      },
+      {
+        origNo: 15,
+        category: "GDPR & PDPA / บทบาทหน้าที่",
+        questionHtml: "<mark class='kw'>ผู้กำหนดวัตถุประสงค์และ วิธีการในการประมวลผล</mark> ข้อมูลที่อาจเป็นเจ้าของ ธุรกิจหรือผู้ให้บริการ หมาย ถึง<mark class='kw'>บทบาทใดใน GDPR</mark>",
+        choices: [
+          "ผู้ควบคุมข้อมูลส่วนบุคคล",
+          "ผู้ประมวลผลข้อมูลส่วนบุคคล",
+          "เจ้าของข้อมูลส่วนบุคคล",
+          "ถูกทุกข้อ"
+        ],
+        correctIndex: 0,
+        explanation: "ผู้ที่มีอำนาจหน้าที่ตัดสินใจเกี่ยวกับการกำหนดวัตถุประสงค์และวิธีการในการประมวลผลข้อมูลส่วนบุคคล (determines the purposes and means of the processing) คือ 'ผู้ควบคุมข้อมูลส่วนบุคคล' (Data Controller)"
+      },
+      {
+        origNo: 16,
+        category: "GDPR / ข้อมูลอ่อนไหว & ความได้สัดส่วน",
+        questionHtml: "<mark class='kw'>โรงเรียนแห่งหนึ่งในโปแลนด์</mark> ใช้<mark class='kw'>ลายนิ้วมือนักเรียน</mark>เพื่อรับอาหารกลางวัน และขอความยินยอมจากผู้ปกครองแล้ว แต่ก็ยัง<mark class='kw'>ถูกปรับตาม GDPR เพราะเหตุใด</mark>",
+        choices: [
+          "โรงเรียนเก็บข้อมูลลายนิวมือไว้ในรูปแบบเอกสารกระดาษ",
+          "ลายนิวมือเป็นข้อมูลอ่อนไหวที่ประมวลผลเกินความจำเป็น และนักเรียนที่ปฏิเสธถูกปฏิบัติอย่างไม่เท่าเทียม",
+          "ผู้ปกครองไม่มีอำนาจให้ความยินยอมแทนนักเรียน ในทุกกรณี",
+          "โรงเรียนไม่ได้ว่าจ้างผู้ประมวลผลข้อมูลจากภายนอก"
+        ],
+        correctIndex: 1,
+        explanation: "ข้อมูลชีวมิติ (ลายนิ้วมือ) เป็นข้อมูลอ่อนไหว (Sensitive Data) การนำมาใช้แค่เช็คชื่อรับอาหารกลางวันถือว่าเกินความจำเป็น (ขัดหลัก Data Minimization) อีกทั้งนักเรียนที่ไม่สแกนนิ้วต้องไปต่อแถวรอท้ายสุด ทำให้เกิดความไม่เท่าเทียมและความยินยอมไม่เป็นอิสระอย่างแท้จริง"
+      },
+      {
+        origNo: 17,
+        category: "GDPR / ขอบเขตการบังคับใช้",
+        questionHtml: "กฎหมายคุ้มครองข้อมูลส่วนบุคคลของสหภาพ ยุโรป <mark class='kw'>GDPR</mark> (General Data Protection Regulation) <mark class='kw'>มีผลคุ้มครองใครต่อไปนี้</mark>",
+        choices: [
+          "One เป็นคนเชื้อชาติไทย ย้ายถิ่นฐานมาอยู่ ในประเทศฝรั่งเศส",
+          "Two เป็นคนอเมริกา อาศัยอยู่ในประเทศสหรัฐอเมริกา และใช้บริการเฉพาะแอปของบริษัทอเมริกัน",
+          "Three เป็นคนฝรั่งเศสย้ายถิ่นฐานมาอยู่ในประเทศไทย",
+          "ถูกทุกข้อ"
+        ],
+        correctIndex: 0,
+        explanation: "GDPR ให้ความคุ้มครองบุคคลธรรมดาที่พำนักอาศัยอยู่ในเขตสหภาพยุโรป (Data subjects who are in the Union) โดยไม่คำนึงถึงสัญชาติหรือเชื้อชาติ ดังนั้นคนไทยที่อาศัยอยู่ในประเทศฝรั่งเศสจึงได้รับความคุ้มครองตาม GDPR"
+      },
+      {
+        origNo: 18,
+        category: "พ.ร.บ. ไซเบอร์ / นิยาม",
+        questionHtml: "อะไรที่ถูกกำหนดว่าเป็น <mark class='kw'>'ภัยคุกคามทางไซเบอร์'</mark>?",
+        choices: [
+          "การอัปเดตซอฟต์แวร์ที่ปรับปรุงความปลอดภัย",
+          "นโยบายของรัฐบาลเกี่ยวกับการปกป้องข้อมูล",
+          "การกระทำที่ไม่ได้รับอนุญาต โดยใช้คอมพิวเตอร์เพื่อทำร้ายระบบ",
+          "ภัยพิบัติทางธรรมชาติที่ส่งผลกระทบต่อศูนย์ข้อมูล"
+        ],
+        correctIndex: 2,
+        explanation: "ภัยคุกคามทางไซเบอร์ (Cyber Threat) หมายถึง การกระทำหรือการดำเนินการใดๆ ที่มิชอบโดยใช้คอมพิวเตอร์หรือระบบคอมพิวเตอร์ หรือโปรแกรมไม่พึงประสงค์ เพื่อมุ่งทำให้เกิดการประทุษร้ายต่อระบบคอมพิวเตอร์หรือข้อมูลคอมพิวเตอร์"
+      },
+      {
+        origNo: 19,
+        category: "Data Protection / หลักการพื้นฐาน",
+        questionHtml: "<mark class='kw'>การคุ้มครองข้อมูล (Data Protection)</mark> มี<mark class='kw'>วัตถุประสงค์เพื่อคุ้มครอง</mark>ตัวเลือกข้อใดต่อไปนี้",
+        choices: [
+          "สิทธิตามเป็นส่วนตัวของบริษัทเกี่ยวกับสถานะทางการเงิน",
+          "สิทธิของรัฐบาลที่จะไม่ให้ข้อมูลด้านงบประมาณแก่ประชาชน",
+          "สิทธิของบุคคลที่จะไม่ให้ข้อมูลส่วนตัวแก่หน่วยงานกำกับดูแลด้านภาษี",
+          "สิทธิตามเป็นส่วนตัวของบุคคลเกี่ยวกับการประมวลผลข้อมูลส่วนบุคคลของตน"
+        ],
+        correctIndex: 3,
+        explanation: "กฎหมายคุ้มครองข้อมูลส่วนบุคคล (Data Protection) มีวัตถุประสงค์หลักเพื่อคุ้มครองสิทธิในความเป็นส่วนตัวของบุคคลธรรมดาเกี่ยวกับการเก็บรวบรวม ใช้ หรือเปิดเผย (การประมวลผล) ข้อมูลส่วนบุคคลของตน"
+      },
+      {
+        origNo: 20,
+        category: "PDPA / ฐานทางกฎหมาย",
+        questionHtml: "<mark class='kw'>ฐานกฎหมายอะไร</mark>ที่ เจ้าของข้อมูลส่วนบุคคล <mark class='kw'>เพิกถอนเมื่อไรก็ได้</mark> โดย ไม่กระทบต่อสิทธิของ เจ้าของข้อมูล",
+        choices: [
+          "ฐานยินยอม",
+          "ฐานกฎหมาย",
+          "ฐานอำนาจรัฐ",
+          "ฐานสัญญา"
+        ],
+        correctIndex: 0,
+        explanation: "ตาม PDPA มาตรา 19 เจ้าของข้อมูลส่วนบุคคลมีสิทธิเพิกถอนความยินยอม (Withdraw Consent) ที่ได้ให้ไว้เมื่อใดก็ได้ โดยต้องทำได้ง่ายเช่นเดียวกับตอนให้ความยินยอม"
+      },
+      {
+        origNo: 21,
+        category: "GDPR / หลักความโปร่งใส",
+        questionHtml: "<mark class='kw'>GDPR</mark> กำหนดให้องค์กรต้อง ประมวลผลข้อมูลส่วนบุคคล <mark class='kw'>อย่างโปร่งใส</mark>ต่อบุคคลที่เกี่ยวข้องซึ่ง<mark class='kw'>มีความหมายตามแนวทางในข้อใด</mark>ต่อไปนี้",
+        choices: [
+          "ดำเนินการอย่างสอดคล้องกับกฎหมาย",
+          "ดำเนินการโดยป้องกันไม่ให้มีการโอนย้ายข้อมูลระหว่างประเทศ",
+          "ดำเนินการโดยระบุอย่างชัดเจนว่าเมื่อได้มีการเก็บรวบรวมข้อมูลและเก็บรวบรวมข้อมูลด้วยเหตุใด",
+          "ดำเนินการอย่างเป็นธรรม"
+        ],
+        correctIndex: 2,
+        explanation: "หลักความโปร่งใส (Transparency) ใน GDPR หมายถึง การที่องค์กรต้องแจ้งให้เจ้าของข้อมูลทราบอย่างชัดเจนเข้าใจง่ายว่ามีการเก็บรวบรวมข้อมูลใด เมื่อใด และเก็บไปเพื่อวัตถุประสงค์ใด"
+      },
+      {
+        origNo: 22,
+        category: "Privacy by Design",
+        questionHtml: "ข้อใด<mark class='kw'>กล่าวผิด</mark>เกี่ยวกับ <mark class='kw'>Privacy by Design</mark>",
+        choices: [
+          "ผู้ออกแบบต้องป้องกันมากกว่าแก้ไข",
+          "ถ้าหากการคุ้มครองข้อมูลส่วนบุคคลทำให้ระบบโดยรวมถูกลดประสิทธิภาพก็ต้องเลือกการคงประสิทธิภาพของระบบก่อน",
+          "ไม่มีข้อใดกล่าวผิด",
+          "การคุ้มครองข้อมูลส่วนบุคคลจะต้องเป็นไปโดยอัตโนมัติ"
+        ],
+        correctIndex: 1,
+        explanation: "หลักการสำคัญของ Privacy by Design ข้อหนึ่งคือ 'Full Functionality – Positive-Sum, not Zero-Sum' คือต้องออกแบบให้ได้ทั้งความเป็นส่วนตัวและประสิทธิภาพการทำงานควบคู่กันไป ไม่ใช่เลือกตัดความเป็นส่วนตัวทิ้งเพื่อแลกกับประสิทธิภาพระบบ"
+      },
+      {
+        origNo: 23,
+        category: "PDPA & GDPR / Data Controller",
+        questionHtml: "ใครเป็น <mark class='kw'>Data Controller</mark> ของ<mark class='kw'>ข้อมูลวันเดือนปีเกิด ใน Profile</mark> ของผู้ใช้ใน <mark class='kw'>Facebook</mark>",
+        choices: [
+          "เจ้าของ Facebook",
+          "คนโพสต์อวยพรวันเกิด",
+          "เจ้าของบัญชี",
+          "ถูกทุกข้อ"
+        ],
+        correctIndex: 0,
+        explanation: "บริษัทผู้ให้บริการแพลตฟอร์ม (เจ้าของ Facebook) เป็นผู้กำหนดวัตถุประสงค์และวิธีการประมวลผลข้อมูลในระบบ Profile ของผู้ใช้ จึงมีสถานะเป็น Data Controller ส่วนเจ้าของบัญชีคือ Data Subject"
+      },
+      {
+        origNo: 24,
+        category: "พ.ร.บ. ไซเบอร์ / ระดับภัยคุกคาม",
+        questionHtml: "การโจมตีทางไซเบอร์ส่งผลกระทบ <mark class='kw'>รุนแรงต่อโครงสร้างพื้นฐานสำคัญ</mark> ทางสารสนเทศในวงกว้าง จน<mark class='kw'>ระบบ ให้บริการประชาชนล้มเหลวทั้งระบบ</mark> และ<mark class='kw'>รัฐไม่สามารถควบคุมการทำงาน ส่วนกลาง</mark>ของระบบคอมพิวเตอร์ของ รัฐได้ จัดเป็น<mark class='kw'>ภัยคุกคามระดับใด</mark>",
+        choices: [
+          "ระดับวิกฤติ",
+          "ระดับไม่ร้ายแรง",
+          "ระดับร้ายแรง",
+          "ระดับเฝ้าระวัง"
+        ],
+        correctIndex: 0,
+        explanation: "ตาม พ.ร.บ. ไซเบอร์ มาตรา 59 ภัยคุกคามที่ส่งผลกระทบรุนแรงในวงกว้างจนระบบบริการประชาชนล้มเหลวทั้งระบบ และรัฐไม่สามารถควบคุมการทำงานส่วนกลางได้ จัดเป็นภัยคุกคามทางไซเบอร์ 'ระดับวิกฤติ'"
+      },
+      {
+        origNo: 25,
+        category: "PDPA / ข้อมูลส่วนบุคคล",
+        questionHtml: "ข้อใดต่อไปนี้คือ<mark class='kw'>ตัวอย่าง ของข้อมูลส่วนบุคคล</mark>",
+        choices: [
+          "ราคาหุ้นของบริษัทในตลาดหุ้น",
+          "ข้อมูลระบุสถานที่จากโทรศัพท์มือถือของ บุคคล",
+          "รายงานทางการแพทย์ของคนตาย",
+          "รายละเอียดงานสำหรับตำแหน่งผู้ช่วย ส่วนตัว"
+        ],
+        correctIndex: 1,
+        explanation: "ข้อมูลระบุตำแหน่งที่ตั้ง (Location Data) จากสมาร์ทโฟนของบุคคลธรรมดาที่มีชีวิตอยู่ สามารถใช้ระบุตัวตนของบุคคลนั้นได้ทางอ้อม จึงเป็นข้อมูลส่วนบุคคล (ส่วนข้อมูลคนตายและข้อมูลบริษัทไม่ใช่ข้อมูลส่วนบุคคลตาม PDPA)"
+      },
+      {
+        origNo: 26,
+        category: "PDPA / ข้อมูลรั่วไหล",
+        questionHtml: "เหตุการณ์ใดต่อไปนี้<mark class='kw'>ไม่ ถือว่าข้อมูลส่วนบุคคลรั่วไหล</mark>",
+        choices: [
+          "IP Address ถูกโพสต์เป็นสาธารณะ",
+          "หมายเลขโทรศัพท์ถูกโพสต์เป็นสาธารณะ",
+          "อีเมล์ถูกโพสต์เป็นสาธารณะ",
+          "รายชื่อผู้มีสิทธิเลือกตั้งถูกโพสต์เป็นสาธารณะ"
+        ],
+        correctIndex: 3,
+        explanation: "การปิดประกาศหรือเผยแพร่รายชื่อผู้มีสิทธิเลือกตั้งต่อสาธารณะ เป็นการดำเนินการของหน่วยงานรัฐตามที่กฎหมายเลือกตั้งบัญญัติให้อำนาจไว้เพื่อความโปร่งใสในการตรวจสอบสิทธิ จึงไม่ถือเป็นเหตุข้อมูลส่วนบุคคลรั่วไหล"
+      },
+      {
+        origNo: 27,
+        category: "PDPA / เจ้าของข้อมูลส่วนบุคคล",
+        questionHtml: "<mark class='kw'>โรงเรียนจ้างบริษัท ICT</mark> ดูแลระบบสารสนเทศ โดยผู้อำนวยการ<mark class='kw'>ส่งรายชื่อนักเรียนและพนักงาน</mark>ให้บริษัท ICT เพื่อสร้างบัญชีผู้ใช้ - <mark class='kw'>ใครคือเจ้าของข้อมูลส่วนบุคคล?</mark>",
+        choices: [
+          "บริษัท ICT ที่ทางโรงเรียนจ้าง",
+          "พนักงานและนักเรียน รวมถึงผู้ปกครอง",
+          "คณะกรรมการโรงเรียน",
+          "เฉพาะนักเรียน"
+        ],
+        correctIndex: 1,
+        explanation: "เจ้าของข้อมูลส่วนบุคคล (Data Subject) คือตัวบุคคลธรรมดาที่เป็นเจ้าของข้อมูลที่ถูกเก็บรวบรวมและนำไปสร้างบัญชี ซึ่งได้แก่ พนักงานและนักเรียน (รวมถึงผู้ปกครองที่ใช้อำนาจปกครองแทนผู้เยาว์)"
+      },
+      {
+        origNo: 28,
+        category: "PDPA / ผู้ควบคุมข้อมูลส่วนบุคคล",
+        questionHtml: "<mark class='kw'>โรงเรียนจ้างบริษัท ICT</mark> ดูแลระบบสารสนเทศ โดยผู้อำนวยการ<mark class='kw'>ส่งรายชื่อนักเรียนและพนักงาน</mark>ให้บริษัท ICT เพื่อสร้างบัญชีผู้ใช้ - <mark class='kw'>ใครคือผู้ควบคุมข้อมูลส่วนบุคคล?</mark>",
+        choices: [
+          "เฉพาะนักเรียน",
+          "คณะกรรมการโรงเรียน",
+          "พนักงานและนักเรียน รวมถึงผู้ปกครอง",
+          "บริษัท ICT ที่ทางโรงเรียนจ้าง"
+        ],
+        correctIndex: 1,
+        explanation: "โรงเรียน (คณะกรรมการโรงเรียน) เป็นผู้ตัดสินใจกำหนดวัตถุประสงค์และสั่งการให้จัดทำระบบบัญชีผู้ใช้ จึงเป็น 'ผู้ควบคุมข้อมูลส่วนบุคคล' (Data Controller) ส่วนบริษัท ICT ที่รับจ้างทำตามคำสั่งคือ 'ผู้ประมวลผลข้อมูลส่วนบุคคล' (Data Processor)"
+      },
+      {
+        origNo: 29,
+        category: "พ.ร.บ. ไซเบอร์ / ระดับภัยคุกคาม",
+        questionHtml: "แฮกเกอร์โจมตีระบบลงทะเบียน ออนไลน์ของหน่วยงานรัฐแห่งหนึ่ง ทำให้<mark class='kw'>ระบบท่างานช้าและมีประสิทธิภาพลดลง</mark> <mark class='kw'>แต่ยังให้บริการประชาชนได้</mark> ภัยคุกคามนี้จัดอยู่ใน<mark class='kw'>ระดับใดตามเกณฑ์ของ พ.ร.บ.ไซเบอร์</mark>",
+        choices: [
+          "ระดับไม่ร้ายแรง",
+          "ไม่จัดเป็นภัยคุกคามทางไซเบอร์",
+          "ระดับวิกฤติ",
+          "ระดับร้ายแรง"
+        ],
+        correctIndex: 0,
+        explanation: "ตาม พ.ร.บ. ไซเบอร์ ภัยคุกคามที่ทำให้ระบบคอมพิวเตอร์ของหน่วยงานรัฐหรือการให้บริการด้อยประสิทธิภาพลง (เช่น ทำงานช้าลง) แต่ยังสามารถให้บริการต่อไปได้ จัดเป็นภัยคุกคาม 'ระดับไม่ร้ายแรง'"
+      },
+      {
+        origNo: 30,
+        category: "พ.ร.บ. ไซเบอร์ / นิยาม",
+        questionHtml: "<mark class='kw'>การรักษาความมั่นคง ปลอดภัยไซเบอร์</mark> หมายถึงอะไร?",
+        choices: [
+          "มาตรการในการป้องกันภัยคุกคามทางไซเบอร์",
+          "การใช้สื่อสังคม",
+          "ความปลอดภัยทางกายภาพของระบบคอมพิวเตอร์",
+          "โซลูชันการจัดเก็บข้อมูล"
+        ],
+        correctIndex: 0,
+        explanation: "การรักษาความมั่นคงปลอดภัยไซเบอร์ (Cybersecurity) หมายถึง มาตรการหรือการดำเนินการที่กำหนดขึ้นเพื่อป้องกัน รับมือ และลดความเสี่ยงจากภัยคุกคามทางไซเบอร์ทั้งจากภายในและภายนอกประเทศ"
+      }
+    ];
+
+    const THAI_LETTERS = ["ก", "ข", "ค", "ง"];
+
+    // State
+    let isRandomMode = true;
+    let activeQuestions = [];
+    let currentIndex = 0;
+    let gridFilter = "all";
+    let isKwHighlighted = true;
+
+    // Helper: Fisher-Yates Shuffle
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function selectMode(random) {
+      isRandomMode = random;
+      document.getElementById("modeRandomCard").classList.toggle("selected", random);
+      document.getElementById("modeSequentialCard").classList.toggle("selected", !random);
+    }
+
+    function buildQuizData() {
+      let baseList = RAW_QUESTIONS.map(q => {
+        const choiceObjs = q.choices.map((text, idx) => ({
+          text,
+          isCorrect: idx === q.correctIndex
+        }));
+        const finalChoices = isRandomMode ? shuffleArray(choiceObjs) : choiceObjs;
+        return {
+          origNo: q.origNo,
+          category: q.category,
+          questionHtml: q.questionHtml,
+          choices: finalChoices,
+          explanation: q.explanation,
+          selectedChoiceIndex: null,
+          flagged: false
+        };
+      });
+
+      if (isRandomMode) {
+        baseList = shuffleArray(baseList);
+      }
+
+      activeQuestions = baseList;
+      currentIndex = 0;
+      gridFilter = "all";
+    }
+
+    function startQuiz() {
+      buildQuizData();
+      document.getElementById("startScreen").classList.add("hidden");
+      document.getElementById("summaryScreen").classList.add("hidden");
+      document.getElementById("quizScreen").classList.remove("hidden");
+      document.getElementById("homeBtn").classList.remove("hidden");
+
+      document.getElementById("currentModeLabel").textContent = isRandomMode
+        ? "🔀 สุ่มโจทย์และช้อย"
+        : "📋 เรียงตามต้นฉบับ .docx";
+
+      renderCurrentQuestion();
+      renderSidebarGrid();
+      updateStats();
+    }
+
+    function renderCurrentQuestion() {
+      const q = activeQuestions[currentIndex];
+      const displayNo = currentIndex + 1;
+
+      // แสดงเลขข้อปัจจุบัน และเลขข้อในไฟล์ .docx
+      document.getElementById("qNumberBadge").textContent = `ข้อ ${displayNo}`;
+      const docxBadge = document.getElementById("qDocxBadge");
+      if (isRandomMode) {
+        docxBadge.textContent = `ข้อ ${displayNo} และ ข้อในไฟล์ .docx ${q.origNo}`;
+      } else {
+        docxBadge.textContent = `ข้อในไฟล์ .docx ${q.origNo}`;
+      }
+
+      document.getElementById("qCategoryBadge").textContent = q.category;
+      document.getElementById("questionText").innerHTML = q.questionHtml;
+
+      // ปุ่มปักธง/ติดดาว
+      const flagBtn = document.getElementById("flagBtn");
+      const flagIcon = document.getElementById("flagIcon");
+      const flagText = document.getElementById("flagText");
+      if (q.flagged) {
+        flagBtn.classList.add("flagged");
+        flagIcon.textContent = "⭐";
+        flagText.textContent = "ปักธงแล้ว";
+      } else {
+        flagBtn.classList.remove("flagged");
+        flagIcon.textContent = "☆";
+        flagText.textContent = "ปักธง/ติดดาว";
+      }
+
+      // ตัวเลือกช้อยส์
+      const choicesContainer = document.getElementById("choicesContainer");
+      choicesContainer.innerHTML = "";
+      const hasAnswered = q.selectedChoiceIndex !== null;
+
+      q.choices.forEach((choice, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "choice-btn";
+        btn.disabled = hasAnswered;
+
+        let statusIcon = "";
+        if (hasAnswered) {
+          if (choice.isCorrect) {
+            btn.classList.add("correct-answer");
+            statusIcon = "✓ เฉลย";
+          } else if (idx === q.selectedChoiceIndex && !choice.isCorrect) {
+            btn.classList.add("wrong-answer");
+            statusIcon = "✗ ที่เลือก";
+          }
+        }
+
+        btn.innerHTML = `
+          <span class="choice-letter">${THAI_LETTERS[idx]}</span>
+          <span class="choice-content">${choice.text}</span>
+          <span class="choice-status-icon">${statusIcon}</span>
+        `;
+
+        btn.onclick = () => selectAnswer(idx);
+        choicesContainer.appendChild(btn);
+      });
+
+      // กล่องเฉลยทันทีหลังตอบ
+      const expBox = document.getElementById("explanationBox");
+      const expHeader = document.getElementById("expHeader");
+      const expBody = document.getElementById("expBody");
+      const reAnswerBtn = document.getElementById("reAnswerBtn");
+
+      if (hasAnswered) {
+        const picked = q.choices[q.selectedChoiceIndex];
+        const correctIdx = q.choices.findIndex(c => c.isCorrect);
+        const correctChoice = q.choices[correctIdx];
+
+        expBox.classList.remove("hidden", "is-correct", "is-wrong");
+        expHeader.classList.remove("correct", "wrong");
+        reAnswerBtn.classList.remove("hidden");
+
+        if (picked.isCorrect) {
+          expBox.classList.add("is-correct");
+          expHeader.classList.add("correct");
+          expHeader.innerHTML = `✅ ตอบถูกต้อง! (ตัวเลือก ${THAI_LETTERS[correctIdx]})`;
+        } else {
+          expBox.classList.add("is-wrong");
+          expHeader.classList.add("wrong");
+          expHeader.innerHTML = `❌ ตอบผิด! คำตอบที่ถูกต้องคือข้อ ${THAI_LETTERS[correctIdx]}: "${correctChoice.text}"`;
+        }
+        expBody.innerHTML = `<strong>คำอธิบาย:</strong> ${q.explanation}`;
+      } else {
+        expBox.classList.add("hidden");
+        reAnswerBtn.classList.add("hidden");
+      }
+
+      // ปุ่มย้อนกลับ / ถัดไป
+      document.getElementById("prevBtn").disabled = currentIndex === 0;
+      const nextBtn = document.getElementById("nextBtn");
+      if (currentIndex === activeQuestions.length - 1) {
+        nextBtn.textContent = "📊 ดูสรุปผลคะแนน";
+      } else {
+        nextBtn.textContent = "ข้อถัดไป ➡️";
+      }
+    }
+
+    function selectAnswer(choiceIdx) {
+      const q = activeQuestions[currentIndex];
+      if (q.selectedChoiceIndex !== null) return;
+      q.selectedChoiceIndex = choiceIdx;
+      renderCurrentQuestion();
+      renderSidebarGrid();
+      updateStats();
+    }
+
+    function clearCurrentAnswer() {
+      activeQuestions[currentIndex].selectedChoiceIndex = null;
+      renderCurrentQuestion();
+      renderSidebarGrid();
+      updateStats();
+    }
+
+    function toggleFlagCurrent() {
+      const q = activeQuestions[currentIndex];
+      q.flagged = !q.flagged;
+      renderCurrentQuestion();
+      renderSidebarGrid();
+      updateStats();
+    }
+
+    function prevQuestion() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        renderCurrentQuestion();
+        renderSidebarGrid();
+      }
+    }
+
+    function nextQuestion() {
+      if (currentIndex < activeQuestions.length - 1) {
+        currentIndex++;
+        renderCurrentQuestion();
+        renderSidebarGrid();
+      } else {
+        showSummaryScreen();
+      }
+    }
+
+    function jumpToQuestion(idx) {
+      currentIndex = idx;
+      renderCurrentQuestion();
+      renderSidebarGrid();
+    }
+
+    function setGridFilter(filter) {
+      gridFilter = filter;
+      document.getElementById("tabAll").classList.toggle("active", filter === "all");
+      document.getElementById("tabFlagged").classList.toggle("active", filter === "flagged");
+      document.getElementById("tabUnanswered").classList.toggle("active", filter === "unanswered");
+      document.getElementById("tabWrong").classList.toggle("active", filter === "wrong");
+      renderSidebarGrid();
+    }
+
+    function renderSidebarGrid() {
+      const grid = document.getElementById("questionGrid");
+      grid.innerHTML = "";
+
+      let shownCount = 0;
+
+      activeQuestions.forEach((q, idx) => {
+        const isAnswered = q.selectedChoiceIndex !== null;
+        const isCorrect = isAnswered && q.choices[q.selectedChoiceIndex].isCorrect;
+        const isWrong = isAnswered && !isCorrect;
+
+        if (gridFilter === "flagged" && !q.flagged) return;
+        if (gridFilter === "unanswered" && isAnswered) return;
+        if (gridFilter === "wrong" && !isWrong) return;
+
+        shownCount++;
+
+        const btn = document.createElement("button");
+        btn.className = "q-grid-btn";
+        if (idx === currentIndex) btn.classList.add("current");
+        if (isCorrect) btn.classList.add("answered-correct");
+        if (isWrong) btn.classList.add("answered-wrong");
+
+        const starHtml = q.flagged ? `<span class="star-dot">⭐</span>` : "";
+        const subDocx = isRandomMode ? `<span class="orig-sub">#${q.origNo}</span>` : "";
+
+        btn.innerHTML = `${starHtml}<span>${idx + 1}</span>${subDocx}`;
+        btn.title = `ข้อที่ ${idx + 1} (ข้อในไฟล์ .docx ${q.origNo})`;
+        btn.onclick = () => jumpToQuestion(idx);
+        grid.appendChild(btn);
+      });
+
+      if (shownCount === 0) {
+        grid.innerHTML = `<div style="grid-column: 1 / -1; text-align:center; padding: 1rem 0; color: var(--text-muted); font-size: 0.85rem;">ไม่มีข้อสอบในหมวดที่กรอง</div>`;
+      }
+    }
+
+    function updateStats() {
+      const total = activeQuestions.length;
+      let answered = 0;
+      let correct = 0;
+      let wrong = 0;
+      let flagged = 0;
+
+      activeQuestions.forEach(q => {
+        if (q.flagged) flagged++;
+        if (q.selectedChoiceIndex !== null) {
+          answered++;
+          if (q.choices[q.selectedChoiceIndex].isCorrect) {
+            correct++;
+          } else {
+            wrong++;
+          }
+        }
+      });
+
+      document.getElementById("statAnswered").textContent = `${answered}/${total}`;
+      document.getElementById("statCorrect").textContent = correct;
+      document.getElementById("statWrong").textContent = wrong;
+      document.getElementById("statFlagged").textContent = flagged;
+      document.getElementById("tabFlagCount").textContent = flagged;
+
+      const pct = Math.round((answered / total) * 100);
+      document.getElementById("progressBar").style.width = `${pct}%`;
+    }
+
+    function showSummaryScreen() {
+      const total = activeQuestions.length;
+      let answered = 0;
+      let correct = 0;
+      let wrong = 0;
+      let flagged = 0;
+
+      activeQuestions.forEach(q => {
+        if (q.flagged) flagged++;
+        if (q.selectedChoiceIndex !== null) {
+          answered++;
+          if (q.choices[q.selectedChoiceIndex].isCorrect) correct++;
+          else wrong++;
+        }
+      });
+
+      const pct = Math.round((correct / total) * 100);
+      document.getElementById("finalScoreText").textContent = `${correct}/${total}`;
+      document.getElementById("finalPercentText").textContent = `${pct}%`;
+      document.getElementById("summarySubtitle").textContent =
+        `ตอบแล้ว ${answered} ข้อ | ตอบถูก ${correct} ข้อ | ตอบผิด ${wrong} ข้อ | ปักธงไว้ ${flagged} ข้อ`;
+
+      document.getElementById("retryWrongBtn").disabled = wrong === 0;
+      document.getElementById("retryFlaggedBtn").disabled = flagged === 0;
+
+      document.getElementById("quizScreen").classList.add("hidden");
+      document.getElementById("summaryScreen").classList.remove("hidden");
+    }
+
+    function resumeQuiz() {
+      document.getElementById("summaryScreen").classList.add("hidden");
+      document.getElementById("quizScreen").classList.remove("hidden");
+    }
+
+    function jumpToFirstWrong() {
+      const idx = activeQuestions.findIndex(
+        q => q.selectedChoiceIndex !== null && !q.choices[q.selectedChoiceIndex].isCorrect
+      );
+      if (idx !== -1) {
+        setGridFilter("wrong");
+        jumpToQuestion(idx);
+        resumeQuiz();
+      }
+    }
+
+    function jumpToFirstFlagged() {
+      const idx = activeQuestions.findIndex(q => q.flagged);
+      if (idx !== -1) {
+        setGridFilter("flagged");
+        jumpToQuestion(idx);
+        resumeQuiz();
+      }
+    }
+
+    function resetCurrentQuiz() {
+      if (!confirm("ต้องการล้างคำตอบทั้งหมดและเริ่มทำรอบใหม่หรือไม่?")) return;
+      startQuiz();
+    }
+
+    function returnToStart() {
+      document.getElementById("quizScreen").classList.add("hidden");
+      document.getElementById("summaryScreen").classList.add("hidden");
+      document.getElementById("homeBtn").classList.add("hidden");
+      document.getElementById("startScreen").classList.remove("hidden");
+    }
+
+    // สลับไฮไลต์คีย์เวิร์ด
+    function toggleKeywordHighlight() {
+      isKwHighlighted = !isKwHighlighted;
+      document.body.classList.toggle("hide-kw", !isKwHighlighted);
+      const btn = document.getElementById("toggleKwBtn");
+      btn.classList.toggle("active-toggle", isKwHighlighted);
+      btn.innerHTML = isKwHighlighted
+        ? `<span>✨ ไฮไลต์คีย์เวิร์ด: เปิด</span>`
+        : `<span>✨ ไฮไลต์คีย์เวิร์ด: ปิด</span>`;
+    }
+
+    // สลับโหมดมืด/สว่าง
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute("data-theme");
+      const next = current === "dark" ? "light" : "dark";
+      html.setAttribute("data-theme", next);
+      document.getElementById("themeIcon").textContent =
+        next === "dark" ? "☀️ โหมดสว่าง" : "🌙 โหมดมืด";
+    }
+
+    // คีย์ลัดแป้นพิมพ์
+    document.addEventListener("keydown", (e) => {
+      const quizVisible = !document.getElementById("quizScreen").classList.contains("hidden");
+      if (!quizVisible) return;
+
+      if (["1", "2", "3", "4"].includes(e.key)) {
+        const idx = parseInt(e.key, 10) - 1;
+        selectAnswer(idx);
+      } else if (e.key === "ArrowLeft") {
+        prevQuestion();
+      } else if (e.key === "ArrowRight") {
+        nextQuestion();
+      } else if (e.key.toLowerCase() === "f") {
+        toggleFlagCurrent();
+      }
+    });
+  </script>
+</body>
+</html>
